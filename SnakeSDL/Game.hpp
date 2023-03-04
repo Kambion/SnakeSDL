@@ -1,46 +1,27 @@
+#pragma once
 #include <iostream>
-#include "SDLgraphics.hpp"
-#include <list>
+#include "Snake.hpp"
 
-enum class Direction {
-	UP,
-	DOWN,
-	LEFT,
-	RIGHT
-};
-
-struct Point {
-	int x;
-	int y;
-};
-
-
-class Snake {
-public:
-	Snake(int startX, int startY, int boardSizeX, int boardSizeY);
-	void draw(SDLWindow& window);
-	void move();
-	void setDirection(Direction dir);
-private:
-	Direction heading;
-	std::list<Point> body;
-	int boardX;
-	int boardY;
-	Point headPos;
-};
 
 class Game {
+public:
+	Game();
+	~Game();
 private:
-	static constexpr int WIDTH = 1000;
-	static constexpr int HEIGHT = 1000;
-	int boardX = 50;
-	int boardY = 50;
+	int boardX = 90;
+	int boardY = 90;
+	Point bonus{ 0,0 };
 	bool active = true;
 	SDLWindow window{ WIDTH, HEIGHT, "Snake" };
-	Snake snake{ 0,0, boardX, boardY };
+	Snake snake{ timer };
+public:
+	Timer timer;
+	bool** board;
 public:
 	void run();
 private:
+	void handleBonus();
+	void spawnBonus();
 	void mainLoop();
 	void event();
 };

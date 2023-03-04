@@ -1,41 +1,26 @@
 #include "Game.hpp"
+#include <string>
 
-Snake::Snake(int startX, int startY, int boardSizeX, int boardSizeY) {
-	body.push_front({ startX, startY });
-	headPos = { startX, startY };
-	boardX = boardSizeX;
-	boardY = boardSizeY;
-	heading = Direction::RIGHT;
-}
-
-void Snake::draw(SDLWindow &window) {
-	for(Point part : body)
-		window.drawRectangle({ part.x*10 + 250, part.y*10 + 250, 10, 10 }, window.mapColor(0xFF0000));
-}
-
-void Snake::move() {
-	switch (heading)
-	{
-	case Direction::UP:
-		headPos.y = (headPos.y - 1) % boardY;
-		if (headPos.y < 0) headPos.y = boardY - 1;
-		break;
-	case Direction::DOWN:
-		headPos.y = (headPos.y + 1) % boardY;
-		if (headPos.y >= boardY) headPos.y = 0;
-		break;
-	case Direction::LEFT:
-		headPos.x = (headPos.x - 1) % boardX;
-		if (headPos.x < 0) headPos.x = boardX - 1;
-		break;
-	case Direction::RIGHT:
-		headPos.x = (headPos.x + 1) % boardX;
-		if (headPos.x >= boardX) headPos.x = 0;
-		break;
+Game::Game() {
+	board = new bool* [boardX];
+	for (int i = 0; i < boardX; i++) {
+		board[i] = new bool[boardY];
 	}
-	body.pop_back();
-	body.push_front(headPos);
+	for (int i = 0; i < boardX; i++) {
+		for (int j = 0; j < boardY; j++) {
+			board[i][j] = false;
+		}
+	}
+	snake.init(25, 25, boardX, boardY, timer, board);
 }
+
+Game::~Game() {
+	for (int i = 0; i < boardX; i++) {
+		delete[] board[i];
+	}
+	delete[] board;
+}
+
 
 void Game::run() {
 	window.drawRectangle({ 0, 0, WIDTH, HEIGHT }, window.mapColor(0x666666));
@@ -43,18 +28,53 @@ void Game::run() {
 }
 
 void Game::mainLoop() {
-	while (active)
+	while (active && !snake.lost)
 	{
+		timer.tick();
 		window.drawRectangle({ 0, 0, WIDTH, HEIGHT }, window.mapColor(0x666666));
+		window.drawRectangle({ 40, 40, 920, 920 }, 10, window.mapColor(0x0), window.mapColor(0x666666));
 		event();
 		snake.move();
+		Point pos = snake.getHeadPosition();
+		handleBonus();
 		snake.draw(window);
+		window.drawString(0, 0, std::to_string(uint64_t(timer.fps)), 10, Fonts::ARIAL, { 0, 255, 0, 255 });
 		window.update();
+	}
+	window.drawString(200, 450, "GAME OVER", 100, Fonts::ARIAL, { 0, 0, 0, 255 });
+	window.update();
+	while (active) {
+		event();
 	}
 }
 
-void Snake::setDirection(Direction dir) {
-	heading = dir;
+void Game::handleBonus() {
+	if (snake.getHeadPosition() == bonus) {
+		snake.increaseLength();
+		spawnBonus();
+	}
+	window.drawRectangle({ bonus.x * 10 + 50, bonus.y * 10 + 50, 10, 10 }, window.mapColor(0x0000FF));
+}
+
+void Game::spawnBonus() {
+	int counter = 0;
+	for (int i = 0; i < boardX; i++) {
+		for (int j = 0; j < boardY; j++) {
+			if (!board[i][j]) counter++;
+		}
+	}
+	if (counter > 0) {
+		int random = rand() % counter + 1;
+		for (int i = 0; i < boardX; i++) {
+			for (int j = 0; j < boardY; j++) {
+				if (!board[i][j]) random--;
+				if (random == 0) {
+					bonus = { i, j };
+					return;
+				}
+			}
+		}
+	}
 }
 
 void Game::event() {

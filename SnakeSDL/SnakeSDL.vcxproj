@@ -81,7 +81,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>C:\Users\kambi\Visual Studio Libraries\SDL2_ttf-2.0.15\include;C:\Users\kambi\Visual Studio Libraries\SDL2-2.0.20\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\kambi\Visual Studio Libraries\SDL2_ttf-2.0.15\lib\x64;C:\Users\kambi\Visual Studio Libraries\SDL2-2.0.20\lib\x64;$(LibraryPath)</LibraryPath>
+    <LibraryPath>C:\Users\kambi\Visual Studio Libraries\SDL2-2.0.20\lib\x64;C:\Users\kambi\Visual Studio Libraries\SDL2_ttf-2.0.15\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -149,12 +149,14 @@
   <ItemGroup>
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="SDLgraphics.cpp" />
+    <ClCompile Include="Snake.cpp" />
     <ClCompile Include="SnakeSDL.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.hpp" />
     <ClInclude Include="SDLgraphics.hpp" />
     <ClInclude Include="SDL_common.hpp" />
+    <ClInclude Include="Snake.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
