@@ -18,6 +18,9 @@ void Timer::tick() {
 }
 
 void Snake::init(int startX, int startY, int boardSizeX, int boardSizeY, Timer& timer, bool **board) {
+	body.clear();
+	lost = false;
+	moveTime = 0;
 	this->timer = timer;
 	boardX = boardSizeX;
 	boardY = boardSizeY;
@@ -34,7 +37,7 @@ void Snake::init(int startX, int startY, int boardSizeX, int boardSizeY, Timer& 
 
 void Snake::draw(SDLWindow& window) {
 	for (Point part : body)
-		window.drawRectangle({ part.x * 10 + 50, part.y * 10 + 50, 10, 10 }, window.mapColor(0xFF0000));
+		window.drawRectangle({ part.x * squereSize + 50, part.y * squereSize + 50, squereSize, squereSize }, window.mapColor(0xFF0000));
 }
 
 void Snake::increaseLength() {

@@ -2,8 +2,7 @@
 #include "SDLgraphics.hpp"
 #include <list>
 
-static constexpr int WIDTH = 1000;
-static constexpr int HEIGHT = 1000;
+static constexpr int squereSize = 20;
 
 struct Timer {
 	int t1, t2 = 0, frames = 0, lastState = 0;

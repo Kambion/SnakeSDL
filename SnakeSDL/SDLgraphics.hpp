@@ -8,15 +8,9 @@ enum class Highlight { RED, GREEN, CIRCLE };
 enum class Fonts {ARIAL, SANS, COMIC_SANS};
 
 class SDLWindow {
-private:	//niezmienne dla user(debil)
-	static constexpr int pieceSize = 70;
-	static constexpr int tileSize = 70;
-	static constexpr int boardSize = 8;
-	static constexpr char
-		backgroundName[] = "background.bmp",
-		charsetName[] = "cs8x8.bmp",
-		piecesName[] = "pieces.bmp",
-		piecesMinName[] = "pieces_min.bmp";
+private:
+	//static constexpr char
+		//backgroundName[] = "background.bmp";
 
 	int w, h;
 	std::string_view title;
@@ -27,17 +21,15 @@ private:	//niezmienne dla user(debil)
 	SDL_Renderer* renderer = nullptr;
 	TTF_Font* font = nullptr;
 
-	struct {
-		SDL_Surface
-			* charset = nullptr;
-	} images;
+	//struct {
+		//SDL_Surface
+			//* charset = nullptr;
+	//} images;
 	struct {
 		Uint32 white{}, light_gary{}, dark_gary{}, light_red{}, light_green{};
 	} colors;
-public: //user(debil) może popsuć
+public:
 	SDLWindow(int width, int height, std::string_view title);
-
-	static constexpr int pieceSizeMin = 35;
 
 	inline int width() const { return w; } 
 	inline int height() const { return h; }

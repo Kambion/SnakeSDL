@@ -6,12 +6,6 @@ Game::Game() {
 	for (int i = 0; i < boardX; i++) {
 		board[i] = new bool[boardY];
 	}
-	for (int i = 0; i < boardX; i++) {
-		for (int j = 0; j < boardY; j++) {
-			board[i][j] = false;
-		}
-	}
-	snake.init(25, 25, boardX, boardY, timer, board);
 }
 
 Game::~Game() {
@@ -24,7 +18,11 @@ Game::~Game() {
 
 void Game::run() {
 	window.drawRectangle({ 0, 0, WIDTH, HEIGHT }, window.mapColor(0x666666));
-	mainLoop();
+	while (active) {
+		menuLoop();
+		initGame();
+		mainLoop();
+	}
 }
 
 void Game::mainLoop() {
@@ -32,28 +30,53 @@ void Game::mainLoop() {
 	{
 		timer.tick();
 		window.drawRectangle({ 0, 0, WIDTH, HEIGHT }, window.mapColor(0x666666));
-		window.drawRectangle({ 40, 40, 920, 920 }, 10, window.mapColor(0x0), window.mapColor(0x666666));
+		window.drawRectangle({ 40, 40, WIDTH-80, HEIGHT-80 }, 10, window.mapColor(0x0), window.mapColor(0x666666));
 		event();
 		snake.move();
 		Point pos = snake.getHeadPosition();
 		handleBonus();
 		snake.draw(window);
 		window.drawString(0, 0, std::to_string(uint64_t(timer.fps)), 10, Fonts::ARIAL, { 0, 255, 0, 255 });
+		window.drawString(800, 10, "Score: " + std::to_string(score), 20, Fonts::ARIAL, {0, 255, 0, 255});
 		window.update();
 	}
 	window.drawString(200, 450, "GAME OVER", 100, Fonts::ARIAL, { 0, 0, 0, 255 });
 	window.update();
-	while (active) {
+	menu = true;
+	while (active && menu) {
 		event();
 	}
+}
+void Game::initGame() {
+	score = 0;
+	timer.worldTime = 0;
+	for (int i = 0; i < boardX; i++) {
+		for (int j = 0; j < boardY; j++) {
+			board[i][j] = false;
+		}
+	}
+	snake.init(boardX/2, boardY/2, boardX, boardY, timer, board);
+	spawnBonus();
+}
+
+void Game::menuLoop() {
+	menu = true;
+	window.drawRectangle({ 0, 0, WIDTH, HEIGHT }, window.mapColor(0x666666));
+	while (active && menu) {
+		window.drawString(300, 100, "SNAKE", 100, Fonts::ARIAL, { 0, 255, 0, 255 });
+		window.update();
+		event();
+	}
+
 }
 
 void Game::handleBonus() {
 	if (snake.getHeadPosition() == bonus) {
 		snake.increaseLength();
+		score++;
 		spawnBonus();
 	}
-	window.drawRectangle({ bonus.x * 10 + 50, bonus.y * 10 + 50, 10, 10 }, window.mapColor(0x0000FF));
+	window.drawRectangle({ bonus.x * squereSize + 50, bonus.y * squereSize + 50, squereSize, squereSize }, window.mapColor(0x0000FF));
 }
 
 void Game::spawnBonus() {
@@ -102,6 +125,9 @@ void Game::event() {
 			case SDLK_a:
 			case SDLK_LEFT:
 				snake.setDirection(Direction::LEFT);
+				break;
+			case SDLK_SPACE:
+				menu = false;
 				break;
 			}
 			break;
